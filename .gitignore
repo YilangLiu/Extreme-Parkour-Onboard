@@ -1,0 +1,52 @@
+# --- Bytecode & interpreter caches ---
+__pycache__/
+*.py[cod]
+*.pyc
+*$py.class
+*.pyo
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Packaging / setuptools / pip build ---
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+pip-wheel-metadata/
+share/python-wheels/
+*.manifest
+*.spec
+
+# --- Testing & coverage ---
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.hypothesis/
+
+# --- Type checkers & linters ---
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+dmypy.json
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Compiled native extensions (often produced by setup / torch extensions) ---
+*.so
+*.dylib
+
+# --- Common ML / experiment tooling (local sync dirs) ---
+wandb/
+
+# --- This repo: training / play logs ---
+legged_gym/logs/

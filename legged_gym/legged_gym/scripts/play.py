@@ -46,6 +46,8 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 from time import time, sleep
 from legged_gym.utils import webviewer
+import json 
+from legged_gym.utils.helpers import class_to_dict
 
 from rsl_rl.modules import RecurrentDepthBackbone, DepthOnlyFCBackbone58x87
 
@@ -110,6 +112,7 @@ def play(args):
     
     env_cfg_dict = class_to_dict(env_cfg)
     config_path = os.path.join(log_pth, "traced")
+    os.makedirs(config_path, exist_ok=True)
     with open(os.path.join(config_path, "config.json"), "w") as f:
         json.dump(env_cfg_dict, f, indent=4)
     print('env config has been saved.')

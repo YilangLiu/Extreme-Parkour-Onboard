@@ -23,7 +23,7 @@ from rsl_rl.modules import RecurrentDepthBackbone, DepthOnlyFCBackbone58x87
 
 def load_model_path(device):
 
-    path = '../../traced'
+    path = '../../../traced'
     base_model = 'base_jit.pt'
     vision_model = 'vision_weight.pt'
 
@@ -68,12 +68,12 @@ def play(args):
                                     "platform": 0.,
                                     "large stairs up": 0.,
                                     "large stairs down": 0.,
-                                    "parkour": 0.,
-                                    "parkour_hurdle": 0.2,
+                                    "parkour": 1.0,
+                                    "parkour_hurdle": 0.0,
                                     "parkour_flat": 0., # 0
-                                    "parkour_step": 0.2,
-                                    "parkour_gap": 0.2, # 0.2 
-                                    "demo": 0.2
+                                    "parkour_step": 0.0,
+                                    "parkour_gap": 0.0, # 0.2 
+                                    "demo": 0.0
                                     }
     
     env_cfg.terrain.terrain_proportions = list(env_cfg.terrain.terrain_dict.values())

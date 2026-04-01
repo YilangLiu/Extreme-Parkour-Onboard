@@ -85,7 +85,7 @@
         },
         "decimation": 4,
         "stiffness": {
-            "joint": 40
+            "joint": 40.0
         }
     },
     "depth": {
@@ -99,17 +99,22 @@
         "camera_terrain_num_rows": 10,
         "dis_noise": 0.0,
         "far_clip": 2,
-        "horizontal_fov": 87,
+        "gaussian_noise_std": 0.0,
+        "horizontal_fov": [
+            86,
+            90
+        ],
         "invert": true,
         "near_clip": 0,
+        "near_plane": 0.1,
         "original": [
             106,
             60
         ],
         "position": [
-            0.24,
+            0.355,
             0,
-            0.12
+            0.065
         ],
         "resized": [
             87,
@@ -169,7 +174,7 @@
         "n_scan": 132,
         "next_goal_threshold": 0.2,
         "num_actions": 12,
-        "num_envs": 5,
+        "num_envs": 10,
         "num_future_goal_obs": 2,
         "num_observations": 753,
         "num_privileged_obs": null,
