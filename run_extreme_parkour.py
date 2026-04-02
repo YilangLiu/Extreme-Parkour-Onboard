@@ -32,8 +32,6 @@ class Go2Node(UnitreeRos2Real):
         self.global_counter = 0
         self.visual_update_interval = 5
 
-        self.actions_sim = torch.from_numpy(np.load('Action_sim_335-11_flat.npy')).to(self.model_device)
-
         self.sim_ite = 3
  
         self.use_stand_policy = False
@@ -148,7 +146,6 @@ class Go2Node(UnitreeRos2Real):
             policy_time = time.monotonic()
             # print('action before clip and normalize: ', action)
 
-            # action = self.actions_sim[self.sim_ite, :]
             self.send_action(action)
             print('action: ', action)
             self.sim_ite += 1
@@ -226,10 +223,16 @@ def main(args):
     
     def turn_obs(proprio, depth_latent_yaw, proprio_history, n_proprio, n_depth_latent, n_hist_len):
         depth_latent = depth_latent_yaw[:, :-2]
-        yaw = depth_latent_yaw[:, -2:] * 1.5
-        print('yaw: ', yaw)
-        
-        proprio[:, 6:8] = yaw
+        depth_yaw = depth_latent_yaw[:, -2:] * 1.5
+
+        if env_node.move_by_wireless_remote:
+            _, _, yaw_cmd = env_node.xyyaw_command[0, :]
+            proprio[:, 6] = yaw_cmd
+            proprio[:, 7] = yaw_cmd
+            print('yaw (wireless remote): ', yaw_cmd)
+        else:
+            proprio[:, 6:8] = depth_yaw
+            print('yaw (depth encoder): ', depth_yaw)
 
         lin_vel_latent = estimator(proprio)
 

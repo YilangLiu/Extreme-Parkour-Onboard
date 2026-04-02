@@ -1,39 +1,27 @@
 {
-    "name": "Extreme Parkour (Isaac Gym)",
-    "image": "isaacgym:latest",
-    "workspaceFolder": "/workspace",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-    "runArgs": [
-        "--gpus", "all",
-        "--network", "host",
-        "--privileged"
-    ],
-    "containerEnv": {
-        "NVIDIA_VISIBLE_DEVICES": "all",
-        "NVIDIA_DRIVER_CAPABILITIES": "all",
-        "DISPLAY": "${localEnv:DISPLAY}",
-        "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
-        "XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}"
+    "name": "go2-hardware",
+    "build": {
+      "dockerfile": "../docker/Dockerfile",
+      "context": "..",
+      "args": {
+        "USER_UID": "1000", // Please check your user id using `id -u` in your host machine
+        "USER_GID": "1000", // Please check your group id using `id -g` in your host machine
+      },
     },
-    "mounts": [
-        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
+    "runArgs": [
+      "--it", // Enable interactive mode
+      "--network=host",
+      "--volume=/tmp/.X11-unix/:/tmp/.X11-unix/", // For GUI display
+      "--runtime=nvidia", // For CUDA/GPU support (for ApproximateFoRL training)
     ],
-    "postCreateCommand": "bash /workspace/.devcontainer/post-create.sh",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-python.python",
-                "ms-python.vscode-pylance",
-                "ms-toolsai.jupyter"
-            ],
-            "settings": {
-                "python.analysis.extraPaths": [
-                    "/workspace",
-                    "/workspace/rsl_rl",
-                    "/workspace/legged_gym",
-                    "/workspace/isaacgym/python"
-                ]
-            }
-        }
-    }
-}
+    "remoteEnv": {
+      "DISPLAY": "${localEnv:DISPLAY}"
+    },
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/real/${localWorkspaceFolderBasename},type=bind",
+    "workspaceFolder": "/home/real/${localWorkspaceFolderBasename}",
+    "mounts": [
+      // We suggest using zsh for better auto-completion and history management
+      // If you do not have zsh installed, you can manually create a .zsh_history file in your home directory
+      "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/home/real/.zsh_history,type=bind",
+    ],
+  }

@@ -1,0 +1,5 @@
+# Large directories not needed in the image
+.git/
+.devcontainer/
+**/__pycache__/
+**/*.pyc
