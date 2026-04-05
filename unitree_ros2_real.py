@@ -398,8 +398,8 @@ class UnitreeRos2Real(Node):
                 vy = vy * (self.cmd_ny_range[1] - self.cmd_ny_range[0]) - self.cmd_ny_range[0]
             else:
                 vy = 0
-            # self.xyyaw_command = torch.tensor([[0.5, vy, yaw]], device= self.model_device, dtype= torch.float32)
-            self.xyyaw_command = torch.tensor([[vx, vy, yaw]], device= self.model_device, dtype= torch.float32)
+            self.xyyaw_command = torch.tensor([[0.5, vy, yaw]], device= self.model_device, dtype= torch.float32)
+            # self.xyyaw_command = torch.tensor([[vx, vy, yaw]], device= self.model_device, dtype= torch.float32)
 
         # refer to Unitree Remote Control data structure, msg.keys is a bit mask
         # 00000000 00000001 means pressing the 0-th button (R1)

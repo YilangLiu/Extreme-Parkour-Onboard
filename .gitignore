@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 *$py.class
 *.pyo
+.DS_Store
 
 # --- Virtual environments ---
 .venv/

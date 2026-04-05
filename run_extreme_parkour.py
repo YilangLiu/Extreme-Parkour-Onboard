@@ -21,8 +21,7 @@ import cv2
 
 import sys
 import time
-import sys
-import threading
+import subprocess
 
 from sport_api_constants import *
 
@@ -33,10 +32,38 @@ class Go2Node(UnitreeRos2Real):
         self.visual_update_interval = 5
 
         self.sim_ite = 3
- 
+
         self.use_stand_policy = False
         self.use_parkour_policy = False
         self.use_sport_mode = True
+
+        self._bag_process = None
+
+    def start_recording(self, bag_dir, mode):
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        bag_path = os.path.join(bag_dir, f"{mode}_{timestamp}")
+        os.makedirs(bag_dir, exist_ok=True)
+        self._bag_process = subprocess.Popen(
+            ["ros2", "bag", "record", "-o", bag_path, "/camera/forward_depth"],
+        )
+        # Wait for ros2 bag record to create the output directory
+        deadline = time.monotonic() + 5.0
+        while time.monotonic() < deadline:
+            if os.path.exists(bag_path):
+                self.get_logger().info(f"Started rosbag recording → {bag_path}")
+                return
+            time.sleep(0.1)
+        self.get_logger().error(f"Bag dir never appeared after 5s: {bag_path}")
+
+    def stop_recording(self):
+        if self._bag_process is not None:
+            self._bag_process.terminate()
+            try:
+                self._bag_process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                self._bag_process.kill()
+            self._bag_process = None
+            print("Stopped rosbag recording.")
 
     # This warm up is useful in my experiment on Go2
     # The first two iterations are very slow, but the rest is fast
@@ -174,6 +201,7 @@ class Go2Node(UnitreeRos2Real):
             self._sport_mode_change(ROBOT_SPORT_API_ID_BALANCESTAND)
 
 
+
 @torch.inference_mode()
 def main(args):
     rclpy.init()
@@ -260,20 +288,28 @@ def main(args):
     env_node.start_ros_handlers()
     env_node.warm_up()
 
-    if args.loop_mode == "while":
-        rclpy.spin_once(env_node, timeout_sec= 0.)
-        env_node.get_logger().info("Model and Policy are ready")
-        while rclpy.ok():
-            main_loop_time = time.monotonic()
-            env_node.main_loop()
-            rclpy.spin_once(env_node, timeout_sec= 0.)
-            time.sleep(max(0, duration - (time.monotonic() - main_loop_time)))
-    elif args.loop_mode == "timer":
-        env_node.get_logger().info('Model and Policy are ready')
-        env_node.start_main_loop_timer(duration)
-        rclpy.spin(env_node)
+    if args.bag_dir:
+        env_node.start_recording(args.bag_dir, args.mode)
 
-    rclpy.shutdown()
+    try:
+        if args.loop_mode == "while":
+            rclpy.spin_once(env_node, timeout_sec= 0.)
+            env_node.get_logger().info("Model and Policy are ready")
+            while rclpy.ok():
+                main_loop_time = time.monotonic()
+                env_node.main_loop()
+                rclpy.spin_once(env_node, timeout_sec= 0.)
+                time.sleep(max(0, duration - (time.monotonic() - main_loop_time)))
+        elif args.loop_mode == "timer":
+            env_node.get_logger().info('Model and Policy are ready')
+            env_node.start_main_loop_timer(duration)
+            rclpy.spin(env_node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        env_node.stop_recording()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == "__main__":
@@ -281,6 +317,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     
     parser.add_argument("--logdir", type= str, default= None, help= "The directory which contains the config.json and model_*.pt files")
+    parser.add_argument("--bag-dir", type= str, default= None, dest= "bag_dir", help= "Directory to save rosbag recordings; omit to disable recording")
     parser.add_argument("--nodryrun", action= "store_true", default= False, help= "Disable dryrun mode")
     parser.add_argument("--loop_mode", type= str, default= "timer",
         choices= ["while", "timer"],

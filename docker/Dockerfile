@@ -199,6 +199,7 @@ COPY --chown=${USERNAME}:${USERNAME} run_extreme_parkour.py /home/${USERNAME}/Ex
 COPY --chown=${USERNAME}:${USERNAME} sport_api_constants.py /home/${USERNAME}/Extreme-Parkour-Onboard/
 COPY --chown=${USERNAME}:${USERNAME} unitree_ros2_real.py /home/${USERNAME}/Extreme-Parkour-Onboard/
 COPY --chown=${USERNAME}:${USERNAME} visual_extreme_parkour.py /home/${USERNAME}/Extreme-Parkour-Onboard/
+COPY --chown=${USERNAME}:${USERNAME} realsense_camera.py /home/${USERNAME}/Extreme-Parkour-Onboard/
 RUN cd /home/${USERNAME}/Extreme-Parkour-Onboard/rsl_rl && pip install -e .
 
 RUN pip install pyrealsense2 
