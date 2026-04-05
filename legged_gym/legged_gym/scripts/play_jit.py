@@ -57,7 +57,7 @@ def play(args):
     env_cfg.terrain.terrain_dict = {"smooth slope": 0., 
                                     "rough slope up": 0.0,
                                     "rough slope down": 0.0,
-                                    "rough stairs up": 0., 
+                                    "rough stairs up": 0.0, 
                                     "rough stairs down": 0., 
                                     "discrete": 0., 
                                     "stepping stones": 0.0,
@@ -68,19 +68,21 @@ def play(args):
                                     "platform": 0.,
                                     "large stairs up": 0.,
                                     "large stairs down": 0.,
-                                    "parkour": 1.0,
+                                    "parkour": 0.0,
                                     "parkour_hurdle": 0.0,
-                                    "parkour_flat": 0., # 0
+                                    "parkour_flat": 0.0, # 0
                                     "parkour_step": 0.0,
                                     "parkour_gap": 0.0, # 0.2 
-                                    "demo": 0.0
+                                    "demo": 1.0
                                     }
     
     env_cfg.terrain.terrain_proportions = list(env_cfg.terrain.terrain_dict.values())
     env_cfg.terrain.curriculum = False
     env_cfg.terrain.max_difficulty = True
     
-    env_cfg.depth.angle = [0, 1]
+    env_cfg.depth.position = [0.355, 0, 0.065]
+    env_cfg.depth.horizontal_fov = [86, 90]
+    env_cfg.depth.angle = [20, 25]
     env_cfg.noise.add_noise = True
     env_cfg.domain_rand.randomize_friction = True
     env_cfg.domain_rand.push_robots = False
